@@ -1,10 +1,10 @@
 # frozen_string_literal: true
+
 NUM_RANGE = 6
-PLUS = '+'
-MINUS = '-'
+PLUS = '+'.freeze
+MINUS = '-'.freeze
 
 class Game
-
   attr_reader :difficulty, :secret_code
   attr_accessor :hint_clone_scode
 
@@ -69,5 +69,4 @@ class Game
     minus_factor
     @answer_plus.push(@answer_minus).join
   end
-
 end

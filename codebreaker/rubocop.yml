@@ -1,0 +1,39 @@
+require: rubocop-rspec
+
+RSpec.Metrics/LineLength:
+      Max: 120
+      Enabled: true
+
+RSpec/MessageSpies:
+  Enabled: false
+
+Metrics/BlockLength:
+  Max: 160
+
+Metrics/LineLength:
+  Max: 100
+
+Metrics/MethodLength:
+  Max: 15
+
+Metrics/AbcSize:
+  Max: 15
+
+  Metrics/CyclomaticComplexity:
+    Max: 6
+
+
+Style/Documentation:
+  Description: 'Document classes and non-namespace modules.'
+  Enabled: false
+
+Naming/ClassAndModuleCamelCase:
+  Enabled: false
+
+
+AllCops:
+  Exclude:
+      - 'bin/console'
+      - 'Rakefile'
+      - 'Gemfile'
+      - 'codebreaker.gemspec'

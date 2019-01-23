@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 MESSAGE_GU = { "attempt": 'user_answer',
                "nil": 'nil',
                "win": '++++', "failure": 'failure' }.freeze
@@ -24,10 +25,10 @@ class ConsoleGame
     while range.cover?(@current_attempt)
       @game_status = guess_result
       case @game_status
-        when MESSAGE_GU[:win] then break
-        when USER_ANSWER[:no_hints]
+      when MESSAGE_GU[:win] then break
+      when USER_ANSWER[:no_hints]
         @messages.answer_for_user(I18n.t(USER_ANSWER[:no_hints]))
-        when Integer
+      when Integer
         send_to_user = I18n.t(USER_ANSWER[:hint_is], hint: @game_status)
         @messages.answer_for_user(send_to_user)
       else
@@ -79,12 +80,12 @@ class ConsoleGame
   def input_handle
     input = user_input
     case input
-      when 'hint'
-        case @current_hint
-          when ZERO then USER_ANSWER[:no_hints]
-          when 1..@difficulty[:difficulty][:hints].to_i then view_hint(@current_hint)
-        end
-      when 'exit' then @messages.goodbye
+    when 'hint'
+      case @current_hint
+      when ZERO then USER_ANSWER[:no_hints]
+      when 1..@difficulty[:difficulty][:hints].to_i then view_hint(@current_hint)
+      end
+    when 'exit' then @messages.goodbye
     else
       input_validate(input)
     end

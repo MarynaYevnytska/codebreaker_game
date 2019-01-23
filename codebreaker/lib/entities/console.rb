@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 MENU = { "choose_the_command": 'choose_the_command',
          "yes": 'y', "no": 'n',
          "game_rules": 'rules',
@@ -11,7 +12,7 @@ MENU = { "choose_the_command": 'choose_the_command',
          "statistics": 'statistics', "game_attemt": 'game_attemt',
          "game_hint": 'game_hint', "continue?": 'continue?' }.freeze
 
-FILE_NAME_ST = './stat.yml'
+FILE_NAME_ST = './stat.yml'.freeze
 
 DIFF = { "easy": { "name": 'Easy',
                    "difficulty": { "hints": 2, "attempts": 15 } },
@@ -41,8 +42,8 @@ class Console
   def game_over(s_code, _game_statistics, game_status = 'failure')
     puts "Secret code is #{s_code.join}"
     case game_status
-      when 'win' then puts I18n.t(MENU[:win])
-      when 'failure' then puts I18n.t(MENU[:failure])
+    when 'win' then puts I18n.t(MENU[:win])
+    when 'failure' then puts I18n.t(MENU[:failure])
     end
     save?(_game_statistics)
   end
@@ -59,10 +60,10 @@ class Console
     while input != MENU[:no] || input != MENU[:yes]
       input = question { I18n.t(MENU[:continue?]) }
       case input
-        when MENU[:no] then goodbye
-        when MENU[:yes] then choice
-        else
-          puts I18n.t(MENU[:wrong_choice])
+      when MENU[:no] then goodbye
+      when MENU[:yes] then choice
+      else
+        puts I18n.t(MENU[:wrong_choice])
       end
     end
   end
@@ -71,11 +72,11 @@ class Console
     while input != MENU[:exit]
       input = question { I18n.t(MENU[:choose_the_command]) }
       case input
-        when MENU[:exit] then goodbye
-        when MENU[:game_rules] then rules
-        when MENU[:stats] then stats
-        when MENU[:game_start] then start
-        else
+      when MENU[:exit] then goodbye
+      when MENU[:game_rules] then rules
+      when MENU[:stats] then stats
+      when MENU[:game_start] then start
+      else
         puts I18n.t(MENU[:wrong_choice])
       end
     end
@@ -127,9 +128,9 @@ class Console
 
   def difficulty
     case @difficulty_value.capitalize
-      when DIFF[:easy][:name] then DIFF[:easy]
-      when DIFF[:medium][:name] then DIFF[:medium]
-      when DIFF[:hell][:name] then DIFF[:hell]
+    when DIFF[:easy][:name] then DIFF[:easy]
+    when DIFF[:medium][:name] then DIFF[:medium]
+    when DIFF[:hell][:name] then DIFF[:hell]
     end
   end
 

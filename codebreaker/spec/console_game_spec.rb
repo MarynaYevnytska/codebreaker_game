@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 RSpec.describe ConsoleGame do
   let!(:console_game) { described_class.new('Maryna', Console::DIFF[:easy]) }
   let!(:name) { console_game.name }
@@ -6,8 +7,8 @@ RSpec.describe ConsoleGame do
   let!(:messages) { console_game.messages }
   let!(:game) { console_game.game }
   let!(:console) { Console.new }
-  let!(:no_hint){ConsoleGame::USER_ANSWER[:no_hints]}
-  let(:number){'1' * ConsoleGame::DIGIT}
+  let!(:no_hint) { ConsoleGame::USER_ANSWER[:no_hints] }
+  let(:number) { '1' * ConsoleGame::DIGIT }
 
   context 'when game start ' do
     it 'when the variable `name` is exist', positive: true do
@@ -47,9 +48,9 @@ RSpec.describe ConsoleGame do
       console_game.game_progress
     end
     it 'when attempt was used if user input is number ' do
-      #allow_any_instance_of(Game).to receive(:compare).and_return('++--')
-      #expect { game.compare(number) }.to change(console_game, :current_attempt).by(+1)
-      #console_game.game_progress TODO this test do failure test in game_spec
+      # allow_any_instance_of(Game).to receive(:compare).and_return('++--')
+      # expect { game.compare(number) }.to change(console_game, :current_attempt).by(+1)
+      # console_game.game_progress TODO this test do failure test in game_spec
     end
     it 'when attemts сame  to end and game over' do
       allow_any_instance_of(Game).to receive(:compare).and_return('++--')
@@ -67,10 +68,10 @@ RSpec.describe ConsoleGame do
       console_game.game_progress
     end
     it 'when user want to get hint but all the hints was used' do
-      #console_game.instance_variable_set(:@current_hint, 0)
-      #allow_any_instance_of(Console).to receive(:question).and_return('hint')
-      #expect(STDOUT).to receive(:puts).with(I18n.t(no_hint))
-      #console_game.game_progress TODO this test do failure test in game_spec
+      # console_game.instance_variable_set(:@current_hint, 0)
+      # allow_any_instance_of(Console).to receive(:question).and_return('hint')
+      # expect(STDOUT).to receive(:puts).with(I18n.t(no_hint))
+      # console_game.game_progress TODO this test do failure test in game_spec
     end
     it 'when guess wasn`t used if user input is hint ' do
       expect { game.compare }.to change(console_game, :current_attempt).by(0)

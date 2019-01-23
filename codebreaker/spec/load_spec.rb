@@ -1,48 +1,49 @@
 # frozen_string_literal: true
+
 RSpec.describe Load do
   let(:dummy_class) { Class.new { extend Load } }
   let(:list) { dummy_class.load_documents(Console::FILE_NAME_ST) }
   let(:rating) { dummy_class.rating(list) }
-  let(:buffer) {StringIO.new}
-  let(:content){'the content fo the file'}
+  let(:buffer) { StringIO.new }
+  let(:content) { 'the content fo the file' }
   let(:file) { './spec/fixtures/stat.yml' }
   let(:file_no) { './spec/fixtures/stat_1.yml' }
 
-  #context 'when file exists' do
-    #before(:each) do
-      #touch(file)
-      #touch(file_no)
-    #end
-    #it { expect(file).to be_an_existing_file }
-    #it { expect(file_no).not_to be_an_existing_file }
-  #end
+  # context 'when file exists' do
+  # before(:each) do
+  # touch(file)
+  # touch(file_no)
+  # end
+  # it { expect(file).to be_an_existing_file }
+  # it { expect(file_no).not_to be_an_existing_file }
+  # end
   context 'when datas save' do
     before (:each) do
       stub_const('Console::FILE_NAME_ST', './spec/fixtures/stat.yml')
     end
     it 'when file exist' do
-      allow(dummy_class).to receive(:save).with(content,file)
+      allow(dummy_class).to receive(:save).with(content, file)
       expect(File.exist?(file)).to eq(true)
-      dummy_class.save(content,file)
+      dummy_class.save(content, file)
     end
     it 'when file don`t exist' do
-      allow(dummy_class).to receive(:save).with(content,file_no)
+      allow(dummy_class).to receive(:save).with(content, file_no)
       expect(File.exist?(file_no)).to eq(false)
-      dummy_class.save(content,file_no)
+      dummy_class.save(content, file_no)
     end
-    #it 'when file don`t exist and file created' do
+    # it 'when file don`t exist and file created' do
     #  allow(dummy_class).to receive(:save).with(content,file_no)
     #  expect(File).to receive(:new).with(file_no, '+w').once
     #  dummy_class.save(content,file_no)
-    #end
-      it 'when datas write down to file' do
-        allow(File).to receive(:open).with( Console::FILE_NAME_ST, 'w').and_yield(buffer)
-        File.open(Console::FILE_NAME_ST, 'w') { |f| f.write(content) }
-        expect(buffer.string).to eq(content)
-      end
-      it 'when use `load_documents` ' do
-        expect(dummy_class.load_statistics(Console::FILE_NAME_ST).empty?).to eq(false)
-      end
+    # end
+    it 'when datas write down to file' do
+      allow(File).to receive(:open).with(Console::FILE_NAME_ST, 'w').and_yield(buffer)
+      File.open(Console::FILE_NAME_ST, 'w') { |f| f.write(content) }
+      expect(buffer.string).to eq(content)
+    end
+    it 'when use `load_documents` ' do
+      expect(dummy_class.load_statistics(Console::FILE_NAME_ST).empty?).to eq(false)
+    end
   end
   context 'when storage is sorting' do
     before (:each) do
