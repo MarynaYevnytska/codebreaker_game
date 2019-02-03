@@ -1,72 +1,54 @@
 # frozen_string_literal: true
+module Codebreaker
+  class Game
+    include Validate
+    USER_INPUT ={user_input_is_hint: 'hint'
+              }.freeze
+    SEND_TO_CONSOLE = { no_hints: 'no_hints',
+                        win: 'win'
+                }.freeze
+    DIGIT = 4
+    ZERO = 0
 
-NUM_RANGE = 6
-PLUS = '+'.freeze
-MINUS = '-'.freeze
+    attr_reader :name, :difficulty, :secret_code
+    attr_accessor :messages, :game, :current_hint, :current_attempt, :game_status
 
-class Game
-  attr_reader :difficulty, :secret_code
-  attr_accessor :hint_clone_scode
-
-  def initialize(difficulty)
-    @difficulty = difficulty
-    @secret_code = create_secret_code
-    @hint_clone_scode = @secret_code.shuffle
-  end
-
-  def compare(user_input)
-    case user_input.chars
-    when @secret_code then MESSAGE_GU[:win]
-    else
-      plus_minus_factoring(user_input)
+    def initialize(name, difficulty)
+      @difficulty = difficulty
+      @current_hint = difficulty[:difficulty][:hints].to_i
+      @core = Codebreaker::Core.new(difficulty)
     end
-  end
 
-  def hint
-    remainder = @hint_clone_scode.pop(@hint_clone_scode.length - 1)
-    hint = @hint_clone_scode - remainder
-    @hint_clone_scode = remainder
-    hint[0].to_i
-  end
+    def secret_code
+      @secret_code=@core.secret_code.join
+    end
 
-  private
+    def guess_result(user_input)
+      validation(user_input)? guess_handle(user_input) : Console::MENU[:errors]
+    end
 
-  def create_secret_code
-    Array.new(ConsoleGame::DIGIT).map! { |_number| rand(NUM_RANGE).to_s }
-  end
+    private
 
-  def plus_factor(user_input)
-    @answer_plus = []
-    @remainder_plus_factor = user_input.chars
-    user_input.chars.each_with_index do |val_user, ind_user|
-      @secret_code.each_with_index do |val_sec, ind_sec|
-        if val_sec == val_user && ind_user == ind_sec
-          @answer_plus.push(PLUS)
-          @remainder_plus_factor[ind_user] = nil
-        end
+    def validation(user_input)
+      user_input==USER_INPUT[:user_input_is_hint]? true : all_validations_for_number(user_input, DIGIT..DIGIT)
+    end
+
+    def guess_handle (user_input)
+     user_input==USER_INPUT[:user_input_is_hint]? hint_handle : @core.compare(user_input)
+    end
+
+    def hint_handle
+      case @current_hint
+        when ZERO then SEND_TO_CONSOLE[:no_hints]
+        when 1..@difficulty[:difficulty][:hints].to_i then view_hint(@current_hint)
       end
     end
-  end
 
-  def minus_factor
-    @answer_minus = []
-    @secret_code.each_with_index do |val_sec, _ind_sec|
-      @remainder_plus_factor.each_with_index do |val_user, ind_user|
-        next unless val_sec == val_user
-
-        @answer_minus.push(MINUS)
-        if @secret_code.count(val_sec) == @remainder_plus_factor.count(val_sec)
-          @remainder_plus_factor[ind_user] = NUM_RANGE + 1
-        else
-          @remainder_plus_factor.map! { |item| item == val_sec ? NUM_RANGE + 1 : item }
-        end
-      end
+    def view_hint(current_hint)
+      current_hint -= 1
+      @current_hint = current_hint
+      @core.hint
     end
-  end
 
-  def plus_minus_factoring(user_input)
-    plus_factor(user_input)
-    minus_factor
-    @answer_plus.push(@answer_minus).join
   end
 end

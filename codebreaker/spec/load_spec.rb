@@ -2,7 +2,7 @@
 
 RSpec.describe Load do
   let(:dummy_class) { Class.new { extend Load } }
-  let(:list) { dummy_class.load_documents(Console::FILE_NAME_ST) }
+  let(:list) { dummy_class.load_documents(Codebreaker::Console::FILE_NAME_ST) }
   let(:rating) { dummy_class.rating(list) }
   let(:buffer) { StringIO.new }
   let(:content) { 'the content fo the file' }

@@ -1,6 +1,6 @@
-RSpec.describe Console do
+RSpec.describe Codebreaker::Console do
   let!(:console) { described_class.new }
-  let!(:console_game) { ConsoleGame.new('Maryna', DIFF[:easy]) }
+  let!(:console_game) { Codebreaker::ConsoleGame.new('Maryna', DIFF[:easy]) }
   let!(:yes) { MENU[:yes] }
   let!(:start) { MENU[:start] }
   let!(:stats) { MENU[:statistics] }
@@ -61,43 +61,36 @@ RSpec.describe Console do
       expect(console).to receive(:name).once
       console.start
     end
-    it 'when insatance of game was created and name write down' do
-      # expect(console).to receive(:difficulty_choice).once
-      # console.start TODO this test do test for game failure
-    end
-    it 'when insatance of game was created and name write down' do
-      # expect(console_game).to receive(:game_progress).once
-      # console.start TODO this test do test for game failure
-    end
   end
   context 'when an user input is valid' do
-    it 'when user want to view statistics and press `stats`', positive: true do
+    before(:each) do
       allow(console).to receive(:first_choice).and_return(yes)
+    end
+    it 'when user want to view statistics and press `stats`', positive: true do
       allow(console).to receive(:question).and_return(stats).once
       allow(console).to receive(:first_choice).and_return(MENU[:no])
       expect(STDOUT).to receive(:puts).with(I18n.t(stats)).twice
       console.choice
     end
-    it 'when user want to view rules  and press `rules`', positive: true do
-      allow(console).to receive(:first_choice).and_return(yes)
+    it 'when view rules  and press `rules`', positive: true do
       allow(console).to receive(:question).and_return(MENU[:game_rules]).once
       allow(console).to receive(:first_choice).and_return(MENU[:no])
       expect(console.choice).to receive(:puts).with(I18n.t(MENU[:game_rules]))
       console.choice
     end
-    it 'when user want to close app and press `goodbye`', positive: true do
+    it 'when close app and press `goodbye`', positive: true do
       # allow(console).to receive(:question).and_return(MENU[:no])
       # expect(STDOUT).to receive(:puts).with(I18n.t(MENU[:goodbye]))
       # console.first_choice TODO this test do test for game failure
     end
-    it 'when user want to continue  and press `y`', positive: true do
-      allow(console).to receive(:question).and_return(yes)
+    it 'when continue  and press `y`', positive: true do
+      # allow(console).to receive(:question).and_return(yes)
       expect(STDOUT).to receive(:puts).with(I18n.t(MENU[:choice]))
       console.first_choice
     end
   end
   context 'when an user input is wrong', positive: true do
-    it 'when user input is INvalid' do
+    it 'when is INvalid' do
       allow(console).to receive(:question).and_return('1111')
       expect(STDOUT).to receive(:puts).with(I18n.t(MENU[:choice]))
       console.choice

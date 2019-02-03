@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
-RSpec.describe ConsoleGame do
-  let!(:console_game) { described_class.new('Maryna', Console::DIFF[:easy]) }
+RSpec.describe Codebreaker::ConsoleGame do
+  let!(:console_game) { described_class.new('Maryna', Codebreaker::Console::DIFF[:easy]) }
   let!(:name) { console_game.name }
   let!(:difficulty) { console_game.difficulty }
   let!(:messages) { console_game.messages }
   let!(:game) { console_game.game }
-  let!(:console) { Console.new }
-  let!(:no_hint) { ConsoleGame::USER_ANSWER[:no_hints] }
-  let(:number) { '1' * ConsoleGame::DIGIT }
+  let!(:console) { Codebreaker::Console.new }
+  let!(:no_hint) { Codebreaker::ConsoleGame::USER_ANSWER[:no_hints] }
+  let(:number) { '1' * Codebreaker::ConsoleGame::DIGIT }
 
   context 'when game start ' do
     it 'when the variable `name` is exist', positive: true do

@@ -1,15 +1,15 @@
 RSpec.describe Validate do
   let(:dummy_class) { Class.new { extend Validate } }
-  let(:number) { '1' * ConsoleGame::DIGIT }
+  let(:number) { '1' * Codebreaker::ConsoleGame::DIGIT }
   let(:win) { 'win' }
-  let(:min_down) { 'a' * (Console::NAME_RANGE.first - 1) }
-  let(:max_up) { 'a' * (Console::NAME_RANGE.last + 1) }
-  let(:number_up) { '1' * (ConsoleGame::DIGIT + 1) }
+  let(:min_down) { 'a' * (Codebreaker::Console::NAME_RANGE.first - 1) }
+  let(:max_up) { 'a' * (Codebreaker::Console::NAME_RANGE.last + 1) }
+  let(:number_up) { '1' * (Codebreaker::ConsoleGame::DIGIT + 1) }
   let(:zero) { 0 }
-  let(:min) { 'a' * Console::NAME_RANGE.first }
-  let(:max) { 'a' * Console::NAME_RANGE.last }
-  let(:name_range) { Console::NAME_RANGE }
-  let(:digit) { ConsoleGame::DIGIT }
+  let(:min) { 'a' * Codebreaker::Console::NAME_RANGE.first }
+  let(:max) { 'a' * Codebreaker::Console::NAME_RANGE.last }
+  let(:name_range) { Codebreaker::Console::NAME_RANGE }
+  let(:digit) { Codebreaker::ConsoleGame::DIGIT }
 
   context 'when a LENGTH of user input is CORRECT', positive: true do
     it 'when a value of an user input of name is in a range && complete min-boundary value' do
@@ -57,33 +57,33 @@ RSpec.describe Validate do
 
   context 'when an user inputted NAME' do
     it 'when an user input of name is CORRECT', positive: true do
-      user_input = dummy_class.errors_array_string(min, name_range)
+      user_input = dummy_class.all_string_validates(min, name_range)
       expect(user_input).to eq(true)
     end
     it 'when an user input of name is INCORRECT', negative: true do
-      user_input = dummy_class.errors_array_string(min_down, name_range)
+      user_input = dummy_class.all_string_validates(min_down, name_range)
       expect(user_input).to eq(false)
     end
   end
 
   context 'when an user inputted NUMBER' do
     it 'when an user input of number is CORRECT', positive: true do
-      user_input = dummy_class.errors_array_guess(number, digit..digit)
+      user_input = dummy_class.all_number_validates(number, digit..digit)
       expect(user_input).to eq(true)
     end
     it 'when an user input of number is INCORRECT', negative: true do
-      user_input = dummy_class.errors_array_guess(max_up, digit..digit)
+      user_input = dummy_class.all_number_validates(max_up, digit..digit)
       expect(user_input).to eq(false)
     end
   end
 
   context 'when an user inputted NUMBER' do
     it 'when an user input of number is CORRECT', negative: true do
-      user_input = dummy_class.errors_array_guess(number, digit..digit)
+      user_input = dummy_class.all_number_validates(number, digit..digit)
       expect(user_input).not_to eq(false)
     end
     it 'when an user input of number is INCORRECT', negative: true do
-      user_input = dummy_class.errors_array_guess(max_up, digit..digit)
+      user_input = dummy_class.all_number_validates(max_up, digit..digit)
       expect(user_input).to eq(false)
     end
   end

@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-RSpec.describe Game do
-  let!(:game) { described_class.new(Console::DIFF[:easy]) }
-  let(:console_game) { ConsoleGame.new('Maryna', Console::DIFF[:easy]) }
+RSpec.describe Codebreaker::Game do
+  let!(:game) { described_class.new(Codebreaker::Console::DIFF[:easy]) }
+  let(:console_game) { Codebreaker::ConsoleGame.new('Maryna', Console::DIFF[:easy]) }
   let!(:difficulty) { game.difficulty }
   let!(:secret_code) { game.secret_code }
   let!(:hint_clone_scode) { game.hint_clone_scode }
-  let!(:win) { ConsoleGame::MESSAGE_GU[:win] }
-  let!(:digit) { ConsoleGame::DIGIT }
+  let!(:win) { Codebreaker::ConsoleGame::MESSAGE_GU[:win] }
+  let!(:digit) { Codebreaker::ConsoleGame::DIGIT }
 
   context 'when the game started and datas move to processor' do
     it 'when the variable `difficulty` is exist', positive: true do

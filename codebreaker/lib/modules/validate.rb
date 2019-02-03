@@ -23,7 +23,7 @@ module Validate
     'Wrong length!' unless range.include?(object.length)
   end
 
-  def errors_array_string(object, range)
+  def all_validations_for_string(object, range)
     errors = []
     errors << length_valid?(object, range)
     errors << string?(object)
@@ -31,7 +31,7 @@ module Validate
     errors.compact.empty?
   end
 
-  def errors_array_guess(object, range)
+  def all_validations_for_number(object, range)
     errors = []
     errors << length_valid?(object, range)
     errors << number?(object)

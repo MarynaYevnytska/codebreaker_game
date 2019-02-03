@@ -1,145 +1,193 @@
 # frozen_string_literal: true
+module Codebreaker
+  class Console
+    include Load
+    include Validate
 
-MENU = { "choose_the_command": 'choose_the_command',
-         "yes": 'y', "no": 'n',
-         "game_rules": 'rules',
-         "stats": 'stats', "game_start": 'start',
-         "goodbye": 'goodbye', "exit": 'exit',
-         "describe_diff": 'difficult', "user_answer": 'user_answer',
-         "wrong_choice": 'wrong_choice', "name": 'name',
-         "win": 'win', "failure": 'failure',
-         "restart?": 'restart?', "save?": 'save?',
-         "statistics": 'statistics', "game_attemt": 'game_attemt',
-         "game_hint": 'game_hint', "continue?": 'continue?' }.freeze
+    MENU = {exit:'exit',
+            errors:'errors',
+            game_rules:'rules',
+            game_start:'start',
+            goodbye:'goodbye',
+            no:'n',
+            no_hints: 'no_hints',
+            save?:'save?',
+            stats:'stats',
+            win:'win',
+            yes:'y',
+          }.freeze
+    DIFF = { easy:{  name:'Easy', difficulty:{  hints:2,  attempts:15 } },
+            medium: {  name:'Medium', difficulty: {  hints:1,  attempts:10 } },
+            hell: {  name:'Hell', difficulty: {  hints:1,  attempts:5 } }
+            }.freeze
 
-FILE_NAME_ST = './stat.yml'.freeze
+    NAME_RANGE = (3..20).freeze
+    FILE_NAME_ST = './stat.yml'.freeze
 
-DIFF = { "easy": { "name": 'Easy',
-                   "difficulty": { "hints": 2, "attempts": 15 } },
-         "medium": { "name": 'Medium',
-                     "difficulty": { "hints": 1, "attempts": 10 } },
-         "hell": { "name": 'Hell',
-                   "difficulty": { "hints": 1, "attempts": 5 } } }.freeze
-NAME_RANGE = (3..20).freeze
+    attr_accessor :current_attempt
 
-class Console
-  include Load
-  include Validate
-
-  def initialize(send_to_console = 'greeting')
-    print I18n.t(send_to_console)
-  end
-
-  def answer_for_user(answer)
-    puts answer
-  end
-
-  def question
-    print yield
-    gets.chomp
-  end
-
-  def game_over(s_code, _game_statistics, game_status = 'failure')
-    puts "Secret code is #{s_code.join}"
-    case game_status
-    when 'win' then puts I18n.t(MENU[:win])
-    when 'failure' then puts I18n.t(MENU[:failure])
+    def initialize
+      print I18n.t('greeting')
     end
-    save?(_game_statistics)
-  end
 
-  def goodbye
-    abort 'Goodbye'
-  end
+    def answer_for_user(answer)
+      puts answer
+    end
 
-  def start
-    ConsoleGame.new(name, difficulty_choice).game_progress
-  end
+    def question(message = I18n.t('user_answer'))
+      print message
+      user_input
+    end
 
-  def first_choice(input = 'start')
-    while input != MENU[:no] || input != MENU[:yes]
-      input = question { I18n.t(MENU[:continue?]) }
-      case input
-      when MENU[:no] then goodbye
-      when MENU[:yes] then choice
-      else
-        puts I18n.t(MENU[:wrong_choice])
+    def main_menu
+      loop do
+        input = question(I18n.t('choose_the_command'))
+        case input
+        when MENU[:exit] then goodbye
+        when MENU[:game_rules] then show_rules
+        when MENU[:game_start] then return start_game
+        when MENU[:stats] then  show_stats
+        else
+          puts I18n.t('wrong_choice')
+        end
       end
     end
-  end
 
-  def choice(input = 'yes')
-    while input != MENU[:exit]
-      input = question { I18n.t(MENU[:choose_the_command]) }
-      case input
-      when MENU[:exit] then goodbye
-      when MENU[:game_rules] then rules
-      when MENU[:stats] then stats
-      when MENU[:game_start] then start
-      else
-        puts I18n.t(MENU[:wrong_choice])
+    private
+
+    def show_rules
+      puts I18n.t('rules')
+    end
+
+    def show_stats
+      print_statistic
+    end
+
+    def start_game
+      @game=Codebreaker::Game.new(name, difficulty)
+      game_progress
+    end
+
+    def game_progress
+      puts I18n.t('start')
+      @current_attempt=1
+      while game_state_valid?
+        game_status = @game.guess_result(question)
+        case game_status
+          when MENU[:win] then break
+          when MENU[:errors] then next
+          when MENU[:no_hints] then answer_for_user(I18n.t('no_hints'))
+          when Integer then answer_for_user(I18n.t('hint_is', hint: game_status))
+          else
+            answer_for_user(game_status)
+            @current_attempt += 1
+        end
+      end
+      game_over(statistics, game_status)
+    end
+
+    def statistics
+      attempts_used = @current_attempt - 1
+      hints_used = @game.difficulty[:difficulty][:hints] - @game.current_hint
+      { "user_name": @name,
+      "difficulty": @game.difficulty[:name],
+      "attempts_total": @game.difficulty[:difficulty][:attempts],
+      "attempts_used": attempts_used,
+      "hints_total": @game.difficulty[:difficulty][:hints],
+      "hints_used": hints_used }
+    end
+
+    def game_state_valid?
+      @current_attempt<=@game.difficulty[:difficulty][:attempts]
+    end
+
+    def print_statistic
+      load_statistics(FILE_NAME_ST).each_with_index do |value, index|
+      puts I18n.t('statistics',  rating: index + 1,
+                                   name: value[:user_name],
+                                   difficulty: value[:difficulty],
+                                   attempts_total: value[:attempts_total],
+                                   attempts_used: value[:attempts_used],
+                                   hints_total: value[:hints_total],
+                                   hints_used: value[:hints_used])
       end
     end
-  end
 
-  private
-
-  def rules
-    puts I18n.t(MENU[:game_rules])
-    first_choice
-  end
-
-  def print_statistic
-    load_statistics(FILE_NAME_ST).each_with_index do |value, index|
-      puts I18n.t(MENU[:statistics], rating: index + 1, name: value[:user_name], difficulty: value[:difficulty],
-                                     attempts_total: value[:attempts_total], attempts_used: value[:attempts_used],
-                                     hints_total: value[:hints_total], hints_used: value[:hints_used])
+    def name
+      validate_name.capitalize
     end
-  end
 
-  def stats
-    print_statistic
-    first_choice
-  end
-
-  def name_call
-    puts I18n.t(MENU[:name], min: NAME_RANGE.first, max: NAME_RANGE.last)
-    question { I18n.t(MENU[:user_answer]) }
-  end
-
-  def validate_name
-    name = name_call
-    if errors_array_string(name, NAME_RANGE)
-      name
-    else
-      validate_name
+    def validate_name
+      loop do
+        name = user_input_name
+        return name if all_validations_for_string(name, NAME_RANGE)
+      end
     end
-  end
 
-  def difficulty_choice
-    puts I18n.t(MENU[:describe_diff])
-    @difficulty_value = question { I18n.t(MENU[:user_answer]) }
-    until DIFF.key?(@difficulty_value.to_sym)
-      puts I18n.t(MENU[:wrong_choice])
-      @difficulty_value = question { I18n.t(MENU[:user_answer]) }
+    def user_input_name
+      puts I18n.t('name', min: NAME_RANGE.first, max: NAME_RANGE.last)
+      question(I18n.t('user_answer'))
     end
-    difficulty
-  end
 
-  def difficulty
-    case @difficulty_value.capitalize
-    when DIFF[:easy][:name] then DIFF[:easy]
-    when DIFF[:medium][:name] then DIFF[:medium]
-    when DIFF[:hell][:name] then DIFF[:hell]
+    def user_input
+      user_input=gets.chomp
+      user_input==MENU[:exit]? goodbye : user_input
     end
-  end
 
-  def name
-    validate_name.capitalize
-  end
+    def difficulty
+      difficulty_menu
+      case @difficulty_value.capitalize
+      when DIFF[:easy][:name] then DIFF[:easy]
+      when DIFF[:medium][:name] then DIFF[:medium]
+      when DIFF[:hell][:name] then DIFF[:hell]
+      end
+    end
 
-  def save?(game_statistics)
-    save(game_statistics, FILE_NAME_ST) if question { I18n.t(MENU[:save?]) } == MENU[:yes]
-    first_choice
+    def difficulty_menu
+      loop do
+        puts I18n.t('describe_diff', count_difficulty: DIFF.size)
+        DIFF.each_value {|value| puts I18n.t('difficulty_item', name: value[:name],
+                                                                attempts: value[:difficulty][:attempts],
+                                                                hints:value[:difficulty][:hints])}
+        @difficulty_value = question (I18n.t('user_answer'))
+        return if DIFF.key?(@difficulty_value.to_sym)
+      end
+    end
+
+    def goodbye
+      abort MENU[:goodbye]
+    end
+
+    def game_over(game_statistics, game_status)
+      game_status ==MENU[:win]? user_winner(game_statistics) : computer_winner(game_status)
+      save?(game_statistics)
+    end
+
+    def user_winner(game_statistics)
+      answer_for_user(I18n.t('win'))
+      loop do
+        case question(I18n.t(MENU[:save?]))
+        when MENU[:yes]
+           save(game_statistics, FILE_NAME_ST)
+           break
+        when MENU[:no]  then main_menu
+        else
+          answer_for_user(I18n.t('wrong_choice'))
+        end
+      end
+      main_menu
+    end
+
+    def computer_winner(game_status)
+      answer_for_user(I18n.t('failure', secret_code: @game.secret_code))
+      loop do
+        case question(I18n.t('continue?'))
+          when MENU[:yes] then main_menu
+          when MENU[:no]  then goodbye
+        else
+          answer_for_user(I18n.t('wrong_choice'))
+        end
+      end
+    end
   end
 end
