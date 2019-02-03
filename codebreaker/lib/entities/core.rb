@@ -1,12 +1,11 @@
 # frozen_string_literal: true
+
 module Codebreaker
-
   class Core
-
     NUM_RANGE = 6
-    PLUS = '+'.freeze
-    MINUS = '-'.freeze
-    WIN ='win'
+    PLUS = '+'
+    MINUS = '-'
+    WIN = 'win'
 
     attr_reader :difficulty, :secret_code
     attr_accessor :hint_clone_scode
@@ -41,14 +40,14 @@ module Codebreaker
     def plus_factor(user_input)
       @answer_plus = []
       @remainder_plus_factor = user_input.chars
-        user_input.chars.each_with_index do |val_user, ind_user|
-          @secret_code.each_with_index do |val_sec, ind_sec|
-            if val_sec == val_user && ind_user == ind_sec
-              @answer_plus.push(PLUS)
-              @remainder_plus_factor[ind_user] = nil
-            end
+      user_input.chars.each_with_index do |val_user, ind_user|
+        @secret_code.each_with_index do |val_sec, ind_sec|
+          if val_sec == val_user && ind_user == ind_sec
+            @answer_plus.push(PLUS)
+            @remainder_plus_factor[ind_user] = nil
           end
         end
+      end
     end
 
     def minus_factor
