@@ -24,6 +24,7 @@ module Codebreaker
     FILE_NAME_ST = './stat.yml'
 
     attr_accessor :current_attempt, :game
+    attr_reader :errors
 
     def initialize
       print I18n.t('greeting')
@@ -89,6 +90,7 @@ module Codebreaker
       user_input == MENU[:exit] ? goodbye : user_input
     end
 
+
     def difficulty
       difficulty_menu
       case @difficulty_value.capitalize
@@ -116,6 +118,7 @@ module Codebreaker
       @current_attempt = 1
       while game_state_valid?
         game_status = @game.guess_result(question)
+        puts game.errors.compact unless game.errors.empty?
         case game_status
         when MENU[:win] then break
         when MENU[:errors] then next
@@ -156,6 +159,14 @@ module Codebreaker
       @current_attempt <= @game.difficulty[:difficulty][:attempts]
     end
 
+    def all_validations_for_string(object, range)
+      @errors = []
+      @errors << length_valid?(object, range)
+      @errors << string?(object)
+      puts @errors.compact
+      @errors.compact.empty?
+    end
+
     def game_over(game_statistics, game_status)
       game_status == MENU[:win] ? user_winner(game_statistics) : computer_winner(game_status)
       save?(game_statistics)
@@ -191,6 +202,5 @@ module Codebreaker
     def goodbye
       abort MENU[:goodbye]
     end
-
   end
 end

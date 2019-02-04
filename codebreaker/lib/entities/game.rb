@@ -9,7 +9,7 @@ module Codebreaker
     DIGIT = 4
     ZERO = 0
 
-    attr_reader :name, :difficulty, :secret_code
+    attr_reader :name, :difficulty, :secret_code, :errors
     attr_accessor :messages, :game, :current_hint, :current_attempt, :game_status
 
     def initialize(difficulty)
@@ -47,6 +47,13 @@ module Codebreaker
       current_hint -= 1
       @current_hint = current_hint
       @core.hint
+    end
+
+    def all_validations_for_number(object, range)
+      @errors = []
+      @errors << length_valid?(object, range)
+      @errors << number?(object)
+      @errors.compact.empty?
     end
   end
 end

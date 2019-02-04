@@ -23,19 +23,4 @@ module Validate
     'Wrong length!' unless range.include?(object.length)
   end
 
-  def all_validations_for_string(object, range)
-    errors = []
-    errors << length_valid?(object, range)
-    errors << string?(object)
-    puts errors.compact
-    errors.compact.empty?
-  end
-
-  def all_validations_for_number(object, range)
-    errors = []
-    errors << length_valid?(object, range)
-    errors << number?(object)
-    puts errors.compact
-    errors.compact.empty?
-  end
 end

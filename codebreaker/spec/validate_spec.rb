@@ -54,37 +54,4 @@ RSpec.describe Validate do
       expect(user_input).to eq('Value is not number')
     end
   end
-
-  context 'when an user inputted NAME' do
-    it 'when an user input of name is CORRECT', positive: true do
-      user_input = dummy_class.all_validations_for_string(min, name_range)
-      expect(user_input).to eq(true)
-    end
-    it 'when an user input of name is INCORRECT', negative: true do
-      user_input = dummy_class.all_validations_for_string(min_down, name_range)
-      expect(user_input).to eq(false)
-    end
-  end
-
-  context 'when an user inputted NUMBER' do
-    it 'when an user input of number is CORRECT', positive: true do
-      user_input = dummy_class.all_validations_for_number(number, digit..digit)
-      expect(user_input).to eq(true)
-    end
-    it 'when an user input of number is INCORRECT', negative: true do
-      user_input = dummy_class.all_validations_for_number(max_up, digit..digit)
-      expect(user_input).to eq(false)
-    end
-  end
-
-  context 'when an user inputted NUMBER' do
-    it 'when an user input of number is CORRECT', negative: true do
-      user_input = dummy_class.all_validations_for_number(number, digit..digit)
-      expect(user_input).not_to eq(false)
-    end
-    it 'when an user input of number is INCORRECT', negative: true do
-      user_input = dummy_class.all_validations_for_number(max_up, digit..digit)
-      expect(user_input).to eq(false)
-    end
-  end
 end
