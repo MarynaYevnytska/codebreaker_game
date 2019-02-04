@@ -13,7 +13,6 @@ spec/foodie_spec.rb
 lib/foodie/version.rb
 lib/foodie.rb
 foodie.gemspec
-Gemfile
 codebreaker/stat.yml
 ./spec/game_spec
 codebreaker/lib/entities/console_game.rb
