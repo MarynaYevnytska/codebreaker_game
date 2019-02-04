@@ -14,7 +14,7 @@ module Codebreaker
              no_hints: 'no_hints',
              save?: 'save?',
              stats: 'stats',
-             win: 'win',
+             win: '++++',
              yes: 'y' }.freeze
     DIFF = { easy: { name: 'Easy', difficulty: { hints: 2, attempts: 15 } },
              medium: { name: 'Medium', difficulty: { hints: 1, attempts: 10 } },
@@ -23,7 +23,7 @@ module Codebreaker
     NAME_RANGE = (3..20).freeze
     FILE_NAME_ST = './stat.yml'
 
-    attr_accessor :current_attempt
+    attr_accessor :current_attempt, :game
 
     def initialize
       print I18n.t('greeting')
@@ -63,57 +63,13 @@ module Codebreaker
     end
 
     def start_game
-      @game = Codebreaker::Game.new(name, difficulty)
+      @name = name
+      @game = Codebreaker::Game.new(difficulty)
       game_progress
-    end
-
-    def game_progress
-      puts I18n.t('start')
-      @current_attempt = 1
-      while game_state_valid?
-        game_status = @game.guess_result(question)
-        case game_status
-        when MENU[:win] then break
-        when MENU[:errors] then next
-        when MENU[:no_hints] then answer_for_user(I18n.t('no_hints'))
-        when Integer then answer_for_user(I18n.t('hint_is', hint: game_status))
-        else
-          answer_for_user(game_status)
-          @current_attempt += 1
-        end
-      end
-      game_over(statistics, game_status)
     end
 
     def name
       validate_name.capitalize
-    end
-
-    def statistics
-      attempts_used = @current_attempt - 1
-      hints_used = @game.difficulty[:difficulty][:hints] - @game.current_hint
-      { "user_name": @name,
-        "difficulty": @game.difficulty[:name],
-        "attempts_total": @game.difficulty[:difficulty][:attempts],
-        "attempts_used": attempts_used,
-        "hints_total": @game.difficulty[:difficulty][:hints],
-        "hints_used": hints_used }
-    end
-
-    def print_statistic
-      load_statistics(FILE_NAME_ST).each_with_index do |value, index|
-        puts I18n.t('statistics', rating: index + 1,
-                                  name: value[:user_name],
-                                  difficulty: value[:difficulty],
-                                  attempts_total: value[:attempts_total],
-                                  attempts_used: value[:attempts_used],
-                                  hints_total: value[:hints_total],
-                                  hints_used: value[:hints_used])
-      end
-    end
-
-    def game_state_valid?
-      @current_attempt <= @game.difficulty[:difficulty][:attempts]
     end
 
     def validate_name
@@ -144,7 +100,7 @@ module Codebreaker
 
     def difficulty_menu
       loop do
-        puts I18n.t('describe_diff', count_difficulty: DIFF.size)
+        puts I18n.t('difficulty', count_difficulty: DIFF.size)
         DIFF.each_value do |value|
           puts I18n.t('difficulty_item', name: value[:name],
                                          attempts: value[:difficulty][:attempts],
@@ -153,6 +109,51 @@ module Codebreaker
         @difficulty_value = question I18n.t('user_answer')
         return if DIFF.key?(@difficulty_value.to_sym)
       end
+    end
+
+    def game_progress
+      puts I18n.t('start')
+      @current_attempt = 1
+      while game_state_valid?
+        game_status = @game.guess_result(question)
+        case game_status
+        when MENU[:win] then break
+        when MENU[:errors] then next
+        when MENU[:no_hints] then answer_for_user(I18n.t('no_hints'))
+        when Integer then answer_for_user(I18n.t('hint_is', hint: game_status))
+        else
+          answer_for_user(game_status)
+          @current_attempt += 1
+        end
+      end
+      game_over(statistics, game_status)
+    end
+
+    def statistics
+      attempts_used = @current_attempt - 1
+      hints_used = @game.difficulty[:difficulty][:hints] - @game.current_hint
+      { "user_name": @name,
+        "difficulty": @game.difficulty[:name],
+        "attempts_total": @game.difficulty[:difficulty][:attempts],
+        "attempts_used": attempts_used,
+        "hints_total": @game.difficulty[:difficulty][:hints],
+        "hints_used": hints_used }
+    end
+
+    def print_statistic
+      load_statistics(FILE_NAME_ST).each_with_index do |value, index|
+        puts I18n.t('statistics', rating: index + 1,
+                                  name: value[:user_name],
+                                  difficulty: value[:difficulty],
+                                  attempts_total: value[:attempts_total],
+                                  attempts_used: value[:attempts_used],
+                                  hints_total: value[:hints_total],
+                                  hints_used: value[:hints_used])
+      end
+    end
+
+    def game_state_valid?
+      @current_attempt <= @game.difficulty[:difficulty][:attempts]
     end
 
     def game_over(game_statistics, game_status)
@@ -190,6 +191,6 @@ module Codebreaker
     def goodbye
       abort MENU[:goodbye]
     end
-    
+
   end
 end

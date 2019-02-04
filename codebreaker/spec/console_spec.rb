@@ -1,103 +1,66 @@
 RSpec.describe Codebreaker::Console do
   let!(:console) { described_class.new }
-  let!(:console_game) { Codebreaker::ConsoleGame.new('Maryna', DIFF[:easy]) }
-  let!(:yes) { MENU[:yes] }
-  let!(:start) { MENU[:start] }
-  let!(:stats) { MENU[:statistics] }
+  let!(:game) { Codebreaker::Game.new(Codebreaker::Console::DIFF[:easy]) }
+  let!(:yes) { Codebreaker::Console::MENU[:yes] }
+  let!(:start) { Codebreaker::Console::MENU[:game_start] }
+  let!(:stats) { Codebreaker::Console::MENU[:statistics] }
   let(:s_code) { [1, 1, 1, 1] }
   let(:game_statistics) { instance_of(Hash) }
 
-  context 'when gem run user see greeting message' do
+  context 'when game progress user see   messages' do
     specify { expect { described_class.new }.to output(print(I18n.t('greeting'))).to_stdout }
-  end
-  it 'when user get answer to console' do
-    allow(console).to receive(:answer_for_user).with('anything').once
-    expect(STDOUT).to receive(:puts).with('anything').once
-    console.answer_for_user('anything')
+    specify { expect { console.answer_for_user('anything')}.to output(print('anything')).to_stdout }
   end
   it 'when user get message and should input  answer  to console' do
-    allow(STDIN).to receive(:gets) { 'Joe' }
-    expect(console.question {}).to eq 'Joe'
+    allow(STDIN).to receive(:gets).and_return('')
+    expect(console.question('')).to eq('')
   end
-  it 'when user get message and should input  answer  to console' do
-    allow(console).to receive(:question).with('anything?').once
-    expect(STDOUT).to receive(:print).with('anything?')
-  end
-  context 'when game over' do
-    before(:each) do
-      allow(console).to receive(:game_over).with(s_code, game_statistics)
+
+  context 'when user does choice' do
+    before (:each)do
+      allow(console).to receive(:loop).and_yield
     end
-    it 'when user watch message about game over ' do
-      expect(STDOUT).to receive(:print).with("Secret code is #{s_code.join}")
-      console.game_over(s_code, game_statistics)
+    after (:each) do
+      console.main_menu
     end
-    it 'when user watch message about game over ' do
-      expect(STDOUT).to receive(:print).with(I18n.t(MENU[:failure]))
-      console.game_over(s_code, game_statistics)
+    it 'when `start` and input name' do
+      allow(console).to receive(:question).and_return('start')
+      expect(STDOUT).to receive(:puts).with(I18n.t('name', min: Codebreaker::Console::NAME_RANGE.first, max: Codebreaker::Console::NAME_RANGE.last))
     end
-    it 'when user watch message about game over with status "win"' do
-      expect(STDOUT).to receive(:puts).with(I18n.t(MENU[:win]))
-      console.game_over(s_code, game_statistics, 'win')
+    it 'when `start` and chooses difficulty' do
+      allow(console).to receive(:question).and_return('start')
+      allow(console).to receive(:name).and_return('Len')
+      expect(STDOUT).to receive(:puts).with(I18n.t('difficulty', count_difficulty: Codebreaker::Console::DIFF.size))
     end
-    it 'when user watch offer for saving' do
-      expect(console).to receive(:save?).once
-      console.game_over(s_code, game_statistics)
+    it 'when user  press `start`' do
+      allow(console).to receive(:question).and_return('start')
+      allow(console).to receive(:name).and_return('Len')
+      allow(console).to receive(:difficulty).and_return(Codebreaker::Console::DIFF[:hell])
+      allow(Codebreaker::Game).to receive(:new).and_return(game)
+      expect(console).to receive(:start_game).once
     end
-    it 'when user saved/no sved and watch next question' do
-      expect(console).to receive(:first_choice).once
-      console.game_over(s_code, game_statistics)
+    it 'when game start' do
+      allow(console).to receive(:question).and_return('start')
+      allow(console).to receive(:name).and_return('Len')
+      allow(console).to receive(:difficulty).and_return(Codebreaker::Console::DIFF[:hell])
+      allow(Codebreaker::Game).to receive(:new).and_return(game)
+      expect(STDOUT).to receive(:puts).with(I18n.t('start'))
     end
-  end
-  context 'when user choosen game start and  press `start`' do
-    before (:each) do
-      allow(console).to receive(:first_choice).and_return(yes)
-      allow(console).to receive(:question).and_return(start).once
+    it 'when user chooses `rules`' do
+      allow(console).to receive(:question).and_return('rules')
+      expect(STDOUT).to receive(:puts).with(I18n.t('rules'))
     end
-    it 'when  method call' do
-      expect(console).to receive(:start).once
-      console.choice
+    it 'when user chooses `stats`' do
+      allow(console).to receive(:question).and_return('stats')
+      expect(STDOUT).to receive(:puts).with(instance_of(String))
     end
-    it 'when insatance of game was created and name write down' do
-      expect(console).to receive(:name).once
-      console.start
+    it 'when user chooses `exit`' do
+      #allow(console).to receive(:question).and_return('exit')
+      #expect(STDOUT).to receive(:puts).with(MENU[:goodbye])
     end
-  end
-  context 'when an user input is valid' do
-    before(:each) do
-      allow(console).to receive(:first_choice).and_return(yes)
-    end
-    it 'when user want to view statistics and press `stats`', positive: true do
-      allow(console).to receive(:question).and_return(stats).once
-      allow(console).to receive(:first_choice).and_return(MENU[:no])
-      expect(STDOUT).to receive(:puts).with(I18n.t(stats)).twice
-      console.choice
-    end
-    it 'when view rules  and press `rules`', positive: true do
-      allow(console).to receive(:question).and_return(MENU[:game_rules]).once
-      allow(console).to receive(:first_choice).and_return(MENU[:no])
-      expect(console.choice).to receive(:puts).with(I18n.t(MENU[:game_rules]))
-      console.choice
-    end
-    it 'when close app and press `goodbye`', positive: true do
-      # allow(console).to receive(:question).and_return(MENU[:no])
-      # expect(STDOUT).to receive(:puts).with(I18n.t(MENU[:goodbye]))
-      # console.first_choice TODO this test do test for game failure
-    end
-    it 'when continue  and press `y`', positive: true do
-      # allow(console).to receive(:question).and_return(yes)
-      expect(STDOUT).to receive(:puts).with(I18n.t(MENU[:choice]))
-      console.first_choice
-    end
-  end
-  context 'when an user input is wrong', positive: true do
-    it 'when is INvalid' do
-      allow(console).to receive(:question).and_return('1111')
-      expect(STDOUT).to receive(:puts).with(I18n.t(MENU[:choice]))
-      console.choice
-    end
-    it 'when the start-menu was called and user can repeat an input', positive: true do
-      allow(console).to receive(:question).and_return('wrong!')
-      expect(STDOUT).to receive(:puts).with(I18n.t(MENU[:wrong!]))
+    it 'when user chooses smt' do
+      allow(console).to receive(:question).and_return('bla-bla-bla')
+      expect(STDOUT).to receive(:puts).with(I18n.t('wrong_choice'))
     end
   end
 end

@@ -5,7 +5,7 @@ module Codebreaker
     NUM_RANGE = 6
     PLUS = '+'
     MINUS = '-'
-    WIN = 'win'
+    WIN = '++++'
 
     attr_reader :difficulty, :secret_code
     attr_accessor :hint_clone_scode

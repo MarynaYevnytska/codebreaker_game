@@ -5,14 +5,14 @@ module Codebreaker
     include Validate
     USER_INPUT = { user_input_is_hint: 'hint' }.freeze
     SEND_TO_CONSOLE = { no_hints: 'no_hints',
-                        win: 'win' }.freeze
+                        win: '++++' }.freeze
     DIGIT = 4
     ZERO = 0
 
     attr_reader :name, :difficulty, :secret_code
     attr_accessor :messages, :game, :current_hint, :current_attempt, :game_status
 
-    def initialize(_name, difficulty)
+    def initialize(difficulty)
       @difficulty = difficulty
       @current_hint = difficulty[:difficulty][:hints].to_i
       @core = Codebreaker::Core.new(difficulty)

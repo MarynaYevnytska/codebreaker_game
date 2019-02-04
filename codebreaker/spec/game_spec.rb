@@ -1,58 +1,76 @@
-# frozen_string_literal: true
-
 RSpec.describe Codebreaker::Game do
   let!(:game) { described_class.new(Codebreaker::Console::DIFF[:easy]) }
-  let(:console_game) { Codebreaker::ConsoleGame.new('Maryna', Console::DIFF[:easy]) }
   let!(:difficulty) { game.difficulty }
-  let!(:secret_code) { game.secret_code }
-  let!(:hint_clone_scode) { game.hint_clone_scode }
-  let!(:win) { Codebreaker::ConsoleGame::MESSAGE_GU[:win] }
-  let!(:digit) { Codebreaker::ConsoleGame::DIGIT }
+  let!(:core) { Codebreaker::Core.new(Codebreaker::Console::DIFF[:easy])}
+  let!(:console) { Codebreaker::Console.new }
+  let!(:no_hint) { Codebreaker::Game::SEND_TO_CONSOLE[:no_hints] }
+  let(:number) { '1' * Codebreaker::Game::DIGIT }
+  let(:no_number) { 'a' * Codebreaker::Game::DIGIT }
 
-  context 'when the game started and datas move to processor' do
+  context 'when game-process start ' do
     it 'when the variable `difficulty` is exist', positive: true do
       expect(difficulty.class).to eq(Hash)
     end
-    it 'when the variable `secret_code` is exist', positive: true do
-      expect(secret_code.class).to eq(Array)
+    it 'when the  difficulty contains `difficulty name` && `difficulty`', positive: true do
+     expect(difficulty.size).to eq(2)
     end
-    it 'when the variable `hint_clone_scode` is exist', positive: true do
-      expect(hint_clone_scode.class).to eq(Array)
+    it 'when the  difficulty contains `attempts` && `hints`', positive: true do
+      expect(difficulty[:difficulty].size).to eq(2)
     end
-    it 'when the digit of `secret_code` is correct', positive: true do
-      expect(secret_code.size).to eq(digit)
-    end
-    it 'when the digit of `secret_code` equal `hint_clone_scode` at the start', positive: true do
-      expect(secret_code.size == hint_clone_scode.size).to eq(true)
-    end
-    it 'when the sequence of `secret_code` is not same as `hint_clone_scode`  at the start', positive: true do
-      expect(game.hint_clone_scode != game.secret_code).to eq(true)
+    it 'when the variable `core` is exist', positive: true do
+      expect(core.class).to eq(Codebreaker::Core)
     end
   end
-  context 'when user did a coorect input of number' do
-    it 'when secret code equles user input, return game status `win`' do
-      user_input = secret_code.join
-      game.compare(user_input)
-      expect(game.compare(user_input)).to eq(win)
+  context 'when secret code was generate' do
+    it{expect(game.secret_code).to be_instance_of(String)}
+    it{expect(game.secret_code.size).to eq(Codebreaker::Game::DIGIT)}
+  end
+
+  context 'when user input is NUMBER', positive: true do
+    before do
+      allow_any_instance_of(Codebreaker::Console).to receive(:question).and_return(number)
+    end
+    it 'when guess handle' do
+      expect(game).to receive(:validation).and_return(true)
+      game.guess_result(number)
+    end
+    it 'when guess handle' do
+      expect(game).to receive(:guess_handle).and_return(instance_of(String))
+      game.guess_result(number)
     end
   end
-  context 'when the method plus-minus factoring output correct value' do
-    YAML.load_file('./spec/fixtures/game_test_data.yml').each do |item|
-      it "when secret_code is #{item[0]} && the user input is #{item[1]}, the responds to consol will be #{item[2]}" do
-        game.instance_variable_set(:@secret_code, item[0].join.chars)
-        expect(game.compare(item[1].join)).to eq(item[2])
-      end
+  context 'when user input is NO NUMBER', positive: true do
+    before do
+      allow_any_instance_of(Codebreaker::Console).to receive(:question).and_return(no_number)
+    end
+    it 'when guess handle' do
+      expect(game).to receive(:validation).and_return(false)
+      game.guess_result(no_number)
+    end
+    it 'when guess handle' do
+      expect(game).to receive(:guess_handle).and_return('errors')
+      game.guess_result(no_number)
     end
   end
-  context 'when user get the hint' do
-    it 'when hint is exists' do
-      expect(game.hint).to be_instance_of(Integer)
+
+  context 'when user input is hint' do
+    before do
+      allow_any_instance_of(Codebreaker::Console).to receive(:question).and_return('hint')
     end
-    it 'when  reminder after first hint is exists' do
-      expect(game.hint_clone_scode).to be_instance_of(Array)
+    it 'when user want to get hint and  hints are available' do
+      expect(game).to receive(:hint_handle).once
+      game.guess_result('hint')
     end
-    it 'when  hint_clone_scode reduces reminder  after first hint by 1' do
-      expect { game.hint }.to change { game.hint_clone_scode.size }.by(-1)
+
+    it 'when value of current attemt change if user input is `hint` ' do
+      expect { core.hint}.to change(game, :current_hint).by(0)
+      game.guess_result('hint')
+    end
+    it 'when current_hint is ZERO' do
+      game.instance_variable_set(:@current_hint, 0)
+      expect(STDOUT).to receive(:puts).with(I18n.t('no_hints'))
+      game.guess_result('hint')
     end
   end
+
 end
