@@ -27,7 +27,8 @@ module Codebreaker
     attr_reader :errors
 
     def initialize
-      print I18n.t('greeting')
+      @output=Outputer.new
+      @output.greeting
     end
 
     def answer_for_user(answer)
@@ -48,7 +49,7 @@ module Codebreaker
         when MENU[:game_start] then return start_game
         when MENU[:stats] then show_stats
         else
-          puts I18n.t('wrong_choice')
+          @output.wrong_choice
         end
       end
     end
@@ -56,7 +57,7 @@ module Codebreaker
     private
 
     def show_rules
-      puts I18n.t('rules')
+      @output.rules
     end
 
     def show_stats
@@ -81,7 +82,7 @@ module Codebreaker
     end
 
     def user_input_name
-      puts I18n.t('name', min: NAME_RANGE.first, max: NAME_RANGE.last)
+      @output.name_requirements
       question(I18n.t('user_answer'))
     end
 
@@ -89,7 +90,6 @@ module Codebreaker
       user_input = gets.chomp
       user_input == MENU[:exit] ? goodbye : user_input
     end
-
 
     def difficulty
       difficulty_menu
@@ -102,11 +102,10 @@ module Codebreaker
 
     def difficulty_menu
       loop do
-        puts I18n.t('difficulty', count_difficulty: DIFF.size)
+        @output.difficulty_list_size
         DIFF.each_value do |value|
-          puts I18n.t('difficulty_item', name: value[:name],
-                                         attempts: value[:difficulty][:attempts],
-                                         hints: value[:difficulty][:hints])
+          @output.difficulty_list(name: value[:name], attempts: value[:difficulty][:attempts],
+                   hints: value[:difficulty][:hints])
         end
         @difficulty_value = question I18n.t('user_answer')
         return if DIFF.key?(@difficulty_value.to_sym)
@@ -114,14 +113,15 @@ module Codebreaker
     end
 
     def game_progress
-      puts I18n.t('start')
+      @output.start
       @current_attempt = 1
       while game_state_valid?
         game_status = @game.guess_result(question)
-        puts game.errors.compact unless game.errors.empty?
         case game_status
         when MENU[:win] then break
-        when MENU[:errors] then next
+        when MENU[:errors]
+          puts game.errors.compact unless game.errors.empty?
+          next
         when MENU[:no_hints] then answer_for_user(I18n.t('no_hints'))
         when Integer then answer_for_user(I18n.t('hint_is', hint: game_status))
         else

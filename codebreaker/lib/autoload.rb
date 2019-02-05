@@ -9,6 +9,7 @@ require_relative '../lib/entities/game.rb'
 require_relative '../lib/modules/validate.rb'
 require_relative '../lib/modules/load.rb'
 require_relative '../lib/entities/game.rb'
+require_relative '../lib/entities/outputer.rb'
 require_relative '../lib/entities/console.rb'
 require_relative '../lib/codebreaker.rb'
 I18n.load_path << Dir[File.expand_path('config/locales') + '/*.yml']
