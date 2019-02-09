@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-
 module Codebreaker
   class Console
     include Load
@@ -108,12 +107,12 @@ module Codebreaker
       while game_state_valid?
         game_status = @game.guess_result(question)
         case game_status
-        when MENU[:win] then break
-        when MENU[:errors]
+          when MENU[:win] then break
+          when MENU[:errors]
           puts game.errors.compact unless game.errors.empty?
           next
-        when MENU[:no_hints] then @output.show_in_console('no_hints')
-        when Integer then @output.show_hint(game_status)
+          when MENU[:no_hints] then @output.show_in_console('no_hints')
+          when Integer then @output.show_hint(game_status)
         else
           @output.show_result_of_comparing(game_status)
           game.current_attempt += 1
