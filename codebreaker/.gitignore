@@ -13,11 +13,10 @@ spec/foodie_spec.rb
 lib/foodie/version.rb
 lib/foodie.rb
 foodie.gemspec
-codebreaker/stat.yml
 ./spec/game_spec
 codebreaker/lib/entities/console_game.rb
 codebreaker/rubocop.yml
 codebreaker/spec/console_game_spec.rb
-codebreaker/stat.yml
 codebreaker/spec/core_spec.rb
 codebreaker/lib/entities/core.rb
+./stat.yml
