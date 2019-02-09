@@ -11,7 +11,7 @@ RSpec.describe Load do
 
   context 'when datas save' do
     before (:each) do
-    stub_const('Console::FILE_NAME_ST', './spec/fixtures/stat.yml')
+      stub_const('Console::FILE_NAME_ST', './spec/fixtures/stat.yml')
     end
     it 'when file exist' do
       allow(dummy_class).to receive(:save).with(content, file)
@@ -20,28 +20,28 @@ RSpec.describe Load do
     end
   end
 
-    it 'when file don`t exist' do
-      allow(dummy_class).to receive(:save).with(content, file_no)
-      expect(File.exist?(file_no)).to eq(false)
-      dummy_class.save(content, file_no)
-    end
-    it 'when file don`t exist and file created' do
-      #allow(dummy_class).to receive(:save).with(content,file_no)
-      #expect(File).to receive(:new).with(file_no, '+w').once
-      #dummy_class.save(content,file_no)
-    end
-    it 'when datas write down to file' do
-      allow(File).to receive(:open).with(file, 'w').and_yield(buffer)
-      File.open(file, 'w') { |f| f.write(content) }
-      expect(buffer.string).to eq(content)
-    end
-    it 'when use `load_documents` ' do
-      expect(dummy_class.load_statistics(Codebreaker::Console::FILE_NAME_ST).empty?).to eq(false)
-    end
+  it 'when file don`t exist' do
+    allow(dummy_class).to receive(:save).with(content, file_no)
+    expect(File.exist?(file_no)).to eq(false)
+    dummy_class.save(content, file_no)
+  end
+  it 'when file don`t exist and file created' do
+    # allow(dummy_class).to receive(:save).with(content,file_no)
+    # expect(File).to receive(:new).with(file_no, '+w').once
+    # dummy_class.save(content,file_no)
+  end
+  it 'when datas write down to file' do
+    allow(File).to receive(:open).with(file, 'w').and_yield(buffer)
+    File.open(file, 'w') { |f| f.write(content) }
+    expect(buffer.string).to eq(content)
+  end
+  it 'when use `load_documents` ' do
+    expect(dummy_class.load_statistics(Codebreaker::Console::FILE_NAME_ST).empty?).to eq(false)
+  end
 
   context 'when storage is sorting' do
     before (:each) do
-    stub_const('Console::FILE_NAME_ST', './spec/fixtures/stat.yml')
+      stub_const('Console::FILE_NAME_ST', './spec/fixtures/stat.yml')
     end
     it 'when storage is sorted by used attemts data type is correct' do
       expect(dummy_class.sorting_by_attemt(list)).to be_instance_of(Array)
@@ -66,7 +66,7 @@ RSpec.describe Load do
       expect(dummy_class.sorted(list)).to be_instance_of(Hash)
     end
     it 'when storage is sorted by used attemts && by used hints && grupped by difficulty' do
-      expect((1..Codebreaker::Console::DIFF.keys.size).cover?(dummy_class.sorted(list).keys.size)).to eq(true)
+      expect((1..Codebreaker::Game::DIFF.keys.size).cover?(dummy_class.sorted(list).keys.size)).to eq(true)
     end
   end
   context 'when storage unions by rating' do

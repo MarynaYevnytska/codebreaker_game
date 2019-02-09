@@ -1,11 +1,17 @@
 Style/FrozenStringLiteralComment:
   Enabled: false
+
 Metrics/LineLength:
   Max: 120
+
 Metrics/BlockLength:
   Exclude:
     - 'spec/**/*.rb'
     - 'codebreaker.gemspec'
+
 Metrics/ModuleLength:
   Exclude:
     - 'spec/**/*.rb'
+
+Style/Documentation/Missing top-level class documentation comment:
+  Enabled: false

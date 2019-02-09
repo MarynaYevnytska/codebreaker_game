@@ -33,4 +33,4 @@ module Load
   def rating(storage)
     sorted(storage).values.flatten
   end
-  end
+end

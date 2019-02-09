@@ -7,7 +7,7 @@ module Validate
             rescue StandardError
               false
               end
-    'Value is not string' if check
+    I18n.t 'no_string' if check
   end
 
   def number?(object)
@@ -16,11 +16,10 @@ module Validate
             rescue StandardError
               false
               end
-    'Value is not number' unless check
+    I18n.t 'no_number' unless check
   end
 
   def length_valid?(object, range)
-    'Wrong length!' unless range.include?(object.length)
+    I18n.t('wrong_length') unless range.include?(object.length)
   end
-
 end

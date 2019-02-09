@@ -19,3 +19,5 @@ codebreaker/lib/entities/console_game.rb
 codebreaker/rubocop.yml
 codebreaker/spec/console_game_spec.rb
 codebreaker/stat.yml
+codebreaker/spec/core_spec.rb
+codebreaker/lib/entities/core.rb
