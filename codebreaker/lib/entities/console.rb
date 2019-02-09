@@ -57,11 +57,11 @@ module Codebreaker
     end
 
     def start_game
-      @game = Codebreaker::Game.new(name, difficulty)
+      @game = Codebreaker::Game.new(registrate_name, registrate_difficulty)
       game_progress
     end
 
-    def name
+    def registrate_name
       validate_name.capitalize
     end
 
@@ -82,7 +82,7 @@ module Codebreaker
       user_input == MENU[:exit] ? goodbye : user_input
     end
 
-    def difficulty
+    def registrate_difficulty
       difficulty_menu
       case @difficulty_value.capitalize
       when Game::DIFF[:easy][:name] then Game::DIFF[:easy]
