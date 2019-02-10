@@ -1,0 +1,48 @@
+en:
+  attempt_result: "Result of comparing: %{game_status}"
+  choose_the_command: "Choose the command\n
+      -Enter keyword `rules`if you want to see rules of the game -\n
+      -Enter keyword `stats` if you want to see the statistics of users results\n
+      -Enter keyword `start` if you want to start the game\n
+      -Enter keyword `exit` if you want to quite the game\n"
+  continue?: 'Do you want to try again? (y/n): '
+  difficulty: "Game has %{count_difficulty} difficulties:\n"
+  difficulty_item: "%{name}: attemts  - %{attempts}; hint - %{hints} \n"
+  failure: "Sorry,computer has won the fight. Secret code was %{secret_code}"
+  goodbye: 'Goodbye'
+  greeting: "Hello,'Codebreaker' is logic game in which you could tries to break a secret code created by a computer.\n"
+  hint_is: "Secret cod has %{hint}!"
+  hints: "You have  %{current_hint}"
+  no_hints: "Sorry, you have no hints!"
+  name: 'Enter your name. Name must be full string, which  min length - %{min}  symbols, max length - %{max} symbols. '
+  rules: "Game Rules\n
+      • Codebreaker is a logic game in which a code-breaker tries to break a secret code created by a code-maker. The codemaker, which will be played by the application we’re going to write, creates a secret code of four numbers between 1 and 6.\n
+      • The codebreaker gets some number of chances to break the code (depends on chosen difficulty). In each turn, the codebreaker makes a guess of 4 numbers. The codemaker then marks the guess with up to 4 signs - + or - or empty spaces.\n
+      • A + indicates an exact match - one of the numbers in the guess is the same as one of the numbers in the secret code and in the same position. For example\n
+          Secret number - 1234\n
+          Input number - 6264\n
+          Number of pluses - 2 (second and fourth position)\n
+      • A - indicates a number match - one of the numbers in the guess is the same as one of the numbers in the secret code but in a different position. For example\n
+          Secret number - 1234\n
+          Input number - 6462\n
+          Number of minuses - 2 (second and fourth position)\n
+      • An empty space indicates that there is not a current digit in a secret number.\n
+      • If codebreaker inputs the exact number as a secret number - codebreaker wins the game. If all attempts are spent - codebreaker loses.\n
+      • Codebreaker also has some number of hints(depends on chosen difficulty). If a user takes a hint - he receives back a separate digit of the secret code.\n"
+  restart?: 'Do you want to try again? (y/n)'
+  save?: 'Do you want to save the result of last game? (y/n): '
+  statistics:   " %{rating} \n
+              Name: %{name} Difficulty: %{difficulty} \n
+              Attempts Total: %{attempts_total} Attempts Used: %{attempts_used} \n
+              Hints Total: %{hints_total} Hints Used: %{hints_used} \n"
+  start: "Game start! Computer has generated a secret code.
+          Get yourself together! \n
+          Write your number or \n
+          If you want to get a help - write the keyword `hint`.  \n
+          If you want to game over - write the keyword `exit`.  \n"
+  user_answer: 'Write you answer here lower-cased and without space:'
+  win: "Congratulations,you've won the fight!"
+  wrong_choice: 'You have passed unexpected command, try one more time'
+  no_number: 'Value is not number'
+  no_string: 'Value is not string'
+  wrong_length: 'Wrong length!'
