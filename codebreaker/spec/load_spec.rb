@@ -10,9 +10,11 @@ RSpec.describe Load do
   let(:file_no) { './spec/fixtures/stat_1.yml' }
 
   context 'when datas save' do
+
     before (:each) do
       stub_const('Console::FILE_NAME_ST', './spec/fixtures/stat.yml')
     end
+
     it 'when file exist' do
       allow(dummy_class).to receive(:save).with(content, file)
       expect(File.exist?(file)).to eq(true)
@@ -37,6 +39,7 @@ RSpec.describe Load do
   end
 
   context 'when storage is sorting' do
+
     before (:each) do
       stub_const('Console::FILE_NAME_ST', './spec/fixtures/stat.yml')
     end
@@ -73,6 +76,7 @@ RSpec.describe Load do
       expect((1..Codebreaker::Game::DIFF.keys.size).cover?(dummy_class.sorted(list).keys.size)).to eq(true)
     end
   end
+
   context 'when storage unions by rating' do
 
     it 'when storage befor union by rating is exist' do
@@ -82,7 +86,7 @@ RSpec.describe Load do
     it 'when storage befor union by rating is exist' do
       expect(dummy_class.rating(list).empty?).to eq(false)
     end
-    
+
     it 'when each item of storage after union by rating is exit' do
       expect(rating).to all(be_instance_of(Hash))
     end
