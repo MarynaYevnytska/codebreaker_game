@@ -9,6 +9,7 @@ RSpec.describe Codebreaker::Processor do
   let!(:digit) { Codebreaker::Game::DIGIT }
 
   context 'when the game started and datas move to processor' do
+    
     it 'when the variable `difficulty` is exist', positive: true do
       expect(difficulty.class).to eq(Hash)
     end
@@ -42,13 +43,17 @@ RSpec.describe Codebreaker::Processor do
       end
     end
   end
+
   context 'when user get the hint' do
+
     it 'when hint is exists' do
       expect(processor.hint).to be_instance_of(Integer)
     end
+
     it 'when  reminder after first hint is exists' do
       expect(processor.secreet_code_clone).to be_instance_of(Array)
     end
+
     it 'when  secreet_code_clone reduces reminder  after first hint by 1' do
       expect { processor.hint }.to change { processor.secreet_code_clone.size }.by(-1)
     end

@@ -9,6 +9,7 @@ RSpec.describe Codebreaker::Game do
   let(:attempts) { Codebreaker::Game::DIFF[:easy][:attempts] }
 
   context 'when game-process start ' do
+
     it 'when the variable `difficulty` is exist', positive: true do
       expect(difficulty.class).to eq(Hash)
     end
@@ -32,6 +33,7 @@ RSpec.describe Codebreaker::Game do
   end
 
   context 'when user input is NUMBER', positive: true do
+
     before do
       allow_any_instance_of(Codebreaker::Console).to receive(:question).and_return(number)
     end
@@ -48,6 +50,7 @@ RSpec.describe Codebreaker::Game do
   end
 
   context 'when user input is NO NUMBER', positive: true do
+
     before do
       allow_any_instance_of(Codebreaker::Console).to receive(:question).and_return(no_number)
     end
@@ -70,6 +73,7 @@ RSpec.describe Codebreaker::Game do
   end
 
   context 'when user input is hint' do
+    
     before do
       allow_any_instance_of(Codebreaker::Console).to receive(:question).and_return('hint')
     end
